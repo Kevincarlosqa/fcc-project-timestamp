@@ -27,17 +27,22 @@ app.get("/api/:date?", function (req, res) {
     const datePattern = /^\d{4}-\d{2}-\d{2}$/;
     return datePattern.test(str);
   }
+
   if (!date) {
     const now = Date.now();
-    res.json({ unix: now, utc: new Date(now).toUTCString() });
+    res.json({ unix: +now, utc: new Date(now).toUTCString() });
   }
   if (!isNaN(date)) {
     const utc = new Date(+date).toUTCString();
-    res.json({ unix: date, utc: utc });
+    res.json({ unix: +date, utc: utc });
   }
   if (isDateInFormatYYYYMMDD(date)) {
     const unix = new Date(date).getTime();
     res.json({ unix, utc: new Date(unix).toUTCString() });
+  }
+  if (!isNaN(Date.parse(date))) {
+    const unix = new Date(date).getTime();
+    res.json({ unix: +unix, utc: new Date(unix).toUTCString() });
   }
   res.json({ error: "Invalid Date" });
 });
